@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font globally */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Basic transition for smoother feedback */
+        #resultBox {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-2xl">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">
+            Fake News Detector
+        </h1>
+
+        <div class="mb-4">
+            <label for="newsText" class="block text-sm font-medium text-gray-700 mb-2">
+                Paste the news article text below:
+            </label>
+            <textarea id="newsText" name="newsText" rows="10"
+                      class="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 resize-y"
+                      placeholder="Enter the news text here..."></textarea>
+        </div>
+
+        <div class="text-center mb-6">
+            <button id="analyzeButton"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                Analyze Text
+            </button>
+        </div>
+
+        <div id="resultBox" class="mt-4 p-4 rounded-md text-center min-h-[60px] flex items-center justify-center" style="display: none;">
+             <span id="resultText" class="font-semibold"></span>
+        </div>
+    </div>
+
+    <script>
+        // Get references to the HTML elements
+        const analyzeButton = document.getElementById('analyzeButton');
+        const newsTextArea = document.getElementById('newsText');
+        const resultBox = document.getElementById('resultBox');
+        const resultText = document.getElementById('resultText');
+
+        // Add event listener to the button
+        analyzeButton.addEventListener('click', () => {
+            const text = newsTextArea.value.trim(); // Get text from textarea
+
+            // Hide previous result immediately
+            resultBox.style.display = 'none';
+            resultText.textContent = ''; // Clear previous text
+            resultBox.classList.remove('bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800'); // Clear previous styles
+
+
+            if (text === "") {
+                // Handle empty input
+                resultText.textContent = 'Please enter some text to analyze.';
+                resultBox.classList.add('bg-yellow-100', 'text-yellow-800');
+                resultBox.style.display = 'flex'; // Show the result box
+                return; // Stop further processing
+            }
+
+            // --- SIMULATION ---
+            // In a real application, you would send 'text' to your backend API here
+            // and wait for the response from your machine learning model.
+            // For now, we'll just simulate a result.
+
+            // Simple simulation: Longer text is slightly more likely to be "Real"
+            const isFake = Math.random() < (0.6 - Math.min(text.length / 2000, 0.3)); // Basic random simulation
+            const confidence = (Math.random() * 0.4 + 0.6).toFixed(2); // Simulate confidence score (60-100%)
+
+            let resultMessage = '';
+            let resultClassBg = '';
+            let resultClassText = '';
+
+            if (isFake) {
+                resultMessage = `Result: Likely Fake News (Confidence: ${confidence})`;
+                resultClassBg = 'bg-red-100';
+                resultClassText = 'text-red-800';
+            } else {
+                resultMessage = `Result: Likely Real News (Confidence: ${confidence})`;
+                resultClassBg = 'bg-green-100';
+                resultClassText = 'text-green-800';
+            }
+            // --- END SIMULATION ---
+
+
+            // Display the simulated result
+            resultText.textContent = resultMessage;
+            resultBox.classList.add(resultClassBg, resultClassText);
+            resultBox.style.display = 'flex'; // Show the result box
+        });
+    </script>
+
+</body>
+</html>

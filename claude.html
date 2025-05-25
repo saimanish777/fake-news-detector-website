@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fake News Detector</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .bg-gradient {
+      background: linear-gradient(to right, #4f46e5, #7e22ce);
+    }
+    .text-gradient {
+      background: linear-gradient(to right, #4f46e5, #7e22ce);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+  <div id="root"></div>
+  
+  <script type="text/javascript">
+    const { useState, useEffect } = React;
+    
+    const App = () => {
+      const [input, setInput] = useState('');
+      const [isUrl, setIsUrl] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [result, setResult] = useState(null);
+      const [history, setHistory] = useState([]);
+      const [showTips, setShowTips] = useState(false);
+      const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
+      
+      useEffect(() => {
+        const savedHistory = localStorage.getItem('factCheckHistory');
+        if (savedHistory) {
+          setHistory(JSON.parse(savedHistory));
+        }
+      }, []);
+      
+      const saveToHistory = (check) => {
+        const newHistory = [check, ...history].slice(0, 10);
+        setHistory(newHistory);
+        localStorage.setItem('factCheckHistory', JSON.stringify(newHistory));
+      };
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!input.trim()) return;
+        
+        setLoading(true);
+        
+        // Simulate API call with setTimeout
+        setTimeout(() => {
+          const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+          const isValidUrl = urlPattern.test(input);
+          
+          // Fake analysis results based on predefined patterns
+          let trustScore, category, explanation, details;
+          
+          if (input.toLowerCase().includes('miracle cure') || 
+              input.toLowerCase().includes('secret they don\'t want you to know') ||
+              input.toLowerCase().includes('shocking truth')) {
+            trustScore = Math.floor(Math.random() * 20);
+            category = 'Likely Misinformation';
+            explanation = 'Content contains sensationalist claims typical of misinformation.';
+            details = [
+              'Uses emotional language and hyperbole',
+              'Makes extraordinary claims without evidence',
+              'Uses clickbait tactics to generate engagement'
+            ];
+          } else if (input.toLowerCase().includes('study shows') || 
+                     input.toLowerCase().includes('research indicates') ||
+                     input.toLowerCase().includes('according to experts')) {
+            trustScore = 60 + Math.floor(Math.random() * 30);
+            category = 'Potentially Credible';
+            explanation = 'Content references research or expertise, but verification is recommended.';
+            details = [
+              'References studies or experts',
+              'Uses measured language',
+              'Lacks specific citations which should be verified'
+            ];
+          } else if (isValidUrl && 
+                    (input.includes('facebook.com') || 
+                     input.includes('youtube.com') || 
+                     input.includes('twitter.com') ||
+                     input.includes('tiktok.com'))) {
+            trustScore = 40 + Math.floor(Math.random() * 20);
+            category = 'Social Media Content';
+            explanation = 'Content from social media platforms may contain mixed reliability.';
+            details = [
+              'Social media content varies widely in reliability',
+              'Check for verification badges on accounts',
+              'Look for original sources cited in posts'
+            ];
+          } else {
+            trustScore = 30 + Math.floor(Math.random() * 60);
+            category = 'Insufficient Context';
+            explanation = 'Limited information available to assess reliability.';
+            details = [
+              'Consider checking multiple sources',
+              'Look for corroborating evidence',
+              'Be cautious about sharing without verification'
+            ];
+          }
+          
+          const resultData = {
+            input,
+            isUrl: isValidUrl,
+            trustScore,
+            category,
+            explanation,
+            details,
+            timestamp: new Date().toISOString(),
+          };
+          
+          setResult(resultData);
+          saveToHistory(resultData);
+          setLoading(false);
+        }, 1500);
+      };
+      
+      const clearHistory = () => {
+        setHistory([]);
+        localStorage.removeItem('factCheckHistory');
+      };
+      
+      const getTrustScoreColor = (score) => {
+        if (score < 30) return 'text-red-600 dark:text-red-400';
+        if (score < 60) return 'text-yellow-600 dark:text-yellow-400';
+        return 'text-green-600 dark:text-green-400';
+      };
+      
+      const toggleDarkMode = () => {
+        setDarkMode(!darkMode);
+      };
+      
+      return (
+        <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+          <div className="dark:bg-gray-900 dark:text-white min-h-screen">
+            {/* Header */}
+            <header className="bg-gradient text-white shadow-lg">
+              <div className="container mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <div className="flex items-center">
+                  <i className="fas fa-shield-check text-2xl mr-3"></i>
+                  <h1 className="text-2xl font-bold">Fake News Detector</h1>
+                </div>
+                <button 
+                  onClick={toggleDarkMode}
+                  className="p-2 rounded-full hover:bg-white hover:bg-opacity-20"
+                >
+                  <i className={`fas ${darkMode ? 'fa-sun' : 'fa-moon'} text-xl`}></i>
+                </button>
+              </div>
+            </header>
+            
+            {/* Main Content */}
+            <main className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+              <div className="max-w-3xl mx-auto">
+                {/* Introduction */}
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold mb-4">Verify Before You Share</h2>
+                  <p className="text-lg text-gray-600 dark:text-gray-400">
+                    Check the credibility of news articles, social media posts, or any text content
+                  </p>
+                </div>
+                
+                {/* Input Form */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                      <div className="flex space-x-3 mb-4">
+                        <button
+                          type="button"
+                          onClick={() => setIsUrl(false)}
+                          className={`flex-1 py-2 px-4 rounded-lg ${!isUrl 
+                            ? 'bg-indigo-600 text-white' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                        >
+                          <i className="fas fa-align-left mr-2"></i>
+                          Text
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsUrl(true)}
+                          className={`flex-1 py-2 px-4 rounded-lg ${isUrl 
+                            ? 'bg-indigo-600 text-white' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}
+                        >
+                          <i className="fas fa-link mr-2"></i>
+                          URL
+                        </button>
+                      </div>
+                      
+                      <div className="relative">
+                        {isUrl ? (
+                          <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Enter article URL"
+                            className="w-full py-3 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        ) : (
+                          <textarea
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Paste news text or claim to verify"
+                            rows="4"
+                            className="w-full py-3 px-4 pr-12 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          ></textarea>
+                        )}
+                        <button 
+                          type="button" 
+                          onClick={() => setInput('')}
+                          className="absolute right-2 top-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                        >
+                          <i className="fas fa-times-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="flex justify-center">
+                      <button
+                        type="submit"
+                        disabled={loading || !input.trim()}
+                        className={`py-3 px-6 rounded-lg font-medium flex items-center justify-center min-w-[200px] 
+                          ${loading || !input.trim() 
+                            ? 'bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed' 
+                            : 'bg-gradient text-white hover:opacity-90'}`}
+                      >
+                        {loading ? (
+                          <>
+                            <i className="fas fa-circle-notch fa-spin mr-2"></i>
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <i className="fas fa-search mr-2"></i>
+                            Verify Now
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                
+                {/* Tips */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                  <div 
+                    className="flex justify-between items-center cursor-pointer"
+                    onClick={() => setShowTips(!showTips)}
+                  >
+                    <h3 className="text-xl font-semibold flex items-center">
+                      <i className="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                      Tips for Spotting Fake News
+                    </h3>
+                    <i className={`fas fa-chevron-${showTips ? 'up' : 'down'} text-gray-500`}></i>
+                  </div>
+                  
+                  {showTips && (
+                    <div className="mt-4 pl-8">
+                      <ul className="space-y-3">
+                        <li className="flex items-start">
+                          <i className="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                          <span>Check the source's reputation and look for about pages</span>
+                        </li>
+                        <li className="flex items-start">
+                          <i className="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                          <span>Look for unusual URLs or site names ending in ".com.co"</span>
+                        </li>
+                        <li className="flex items-start">
+                          <i className="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                          <span>Verify with fact-checking websites (Snopes, FactCheck.org)</span>
+                        </li>
+                        <li className="flex items-start">
+                          <i className="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                          <span>Check the article date and make sure it's current</span>
+                        </li>
+                        <li className="flex items-start">
+                          <i className="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                          <span>Beware of clickbait titles with excessive punctuation or all caps</span>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Results */}
+                {result && (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8 animate-fade-in">
+                    <h3 className="text-xl font-semibold mb-4">Analysis Results</h3>
+                    
+                    <div className="flex flex-col sm:flex-row items-center justify-between mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                      <div className="mb-4 sm:mb-0 text-center sm:text-left">
+                        <p className="text-gray-600 dark:text-gray-400 mb-1">Trust Score</p>
+                        <div className="flex items-center">
+                          <span className={`text-4xl font-bold ${getTrustScoreColor(result.trustScore)}`}>
+                            {result.trustScore}%
+                          </span>
+                          <div className="ml-3 flex">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <i 
+                                key={star}
+                                className={`fas fa-star ${star <= Math.ceil(result.trustScore/20) 
+                                  ? 'text-yellow-500' 
+                                  : 'text-gray-300 dark:text-gray-600'}`}
+                              ></i>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="text-center sm:text-right">
+                        <p className="text-gray-600 dark:text-gray-400 mb-1">Classification</p>
+                        <span className={`text-lg font-semibold px-4 py-1 rounded-full ${
+                          result.trustScore < 30 
+                            ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' 
+                            : result.trustScore < 60
+                              ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
+                              : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                        }`}>
+                          {result.category}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <h4 className="font-medium text-lg mb-2">Source Analysis</h4>
+                      <p className="text-gray-700 dark:text-gray-300">{result.explanation}</p>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <h4 className="font-medium text-lg mb-2">Key Findings</h4>
+                      <ul className="space-y-2">
+                        {result.details.map((detail, index) => (
+                          <li key={index} className="flex items-start">
+                            <i className="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                            <span className="text-gray-700 dark:text-gray-300">{detail}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                      <h4 className="font-medium text-lg mb-2">Recommendation</h4>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {result.trustScore < 30 
+                          ? 'This content shows strong signs of misinformation. We recommend not sharing it and seeking information from more reliable sources.'
+                          : result.trustScore < 60
+                            ? 'This content shows some potential issues. Consider fact-checking with additional sources before sharing.'
+                            : 'This content appears relatively reliable, but best practice is to verify important claims with multiple sources.'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* History */}
+                {history.length > 0 && (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold">Recent Checks</h3>
+                      <button 
+                        onClick={clearHistory}
+                        className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                      >
+                        <i className="fas fa-trash-alt mr-1"></i>
+                        Clear
+                      </button>
+                    </div>
+                    
+                    <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                      {history.map((item, index) => (
+                        <div key={index} className="py-3">
+                          <div className="flex justify-between items-center">
+                            <div className="flex-1 truncate">
+                              <p className="truncate text-gray-700 dark:text-gray-300">
+                                {item.input.length > 60 
+                                  ? item.input.substring(0, 60) + '...' 
+                                  : item.input}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {new Date(item.timestamp).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="ml-4 flex items-center">
+                              <span className={`text-sm font-medium ${getTrustScoreColor(item.trustScore)}`}>
+                                {item.trustScore}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </main>
+            
+            {/* Footer */}
+            <footer className="bg-gray-100 dark:bg-gray-800 py-8">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center">
+                  <p className="text-gray-600 dark:text-gray-400">
+                    This tool provides an initial assessment but is not a definitive fact-checker.
+                    Always verify information with multiple reliable sources.
+                  </p>
+                  <div className="mt-4 flex justify-center space-x-4">
+                    <a href="#" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                      <i className="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                      <i className="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                      <i className="fab fa-github"></i>
+                    </a>
+                  </div>
+                  <p className="mt-4 text-sm text-gray-500">
+                    © 2025 Fake News Detector. All rights reserved.
+                  </p>
+                </div>
+              </div>
+            </footer>
+          </div>
+        </div>
+      );
+    };
+    
+    ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    );
+  </script>
+</body>
+</html>

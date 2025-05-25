@@ -1,0 +1,119 @@
+<!-- trustverify.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustVerify</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Inter, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to bottom, #4567b7, #6c5ce7);
+        }
+
+        .hero {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #news-input {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        #check-btn {
+            background-color: #4567b7;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .analysis {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #trust-score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4567b7;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">API</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <h1>Check the Trustworthiness of News Instantly</h1>
+            <form>
+                <textarea id="news-input" placeholder="Paste news text or headlines"></textarea>
+                <button id="check-btn" type="button">Check</button>
+            </form>
+        </section>
+        <section class="analysis">
+            <div id="trust-score"></div>
+            <div id="confidence-level"></div>
+            <div id="explanation"></div>
+        </section>
+    </main>
+
+    <script>
+        // JavaScript Code
+        const newsInput = document.getElementById('news-input');
+        const checkBtn = document.getElementById('check-btn');
+        const trustScoreDiv = document.getElementById('trust-score');
+        const confidenceLevelDiv = document.getElementById('confidence-level');
+        const explanationDiv = document.getElementById('explanation');
+
+        // Mock API function to simulate analysis result
+        function analyzeNews(text) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const trustScore = Math.floor(Math.random() * 100);
+                    const confidenceLevel = trustScore > 70 ? 'Likely True' : trustScore > 30 ? 'Possibly False' : 'Uncertain';
+                    const explanation = trustScore > 70 ? 'The news article appears to be trustworthy.' : trustScore > 30 ? 'The news article may contain some false information.' : 'The news article is uncertain.';
+                    resolve({ trustScore, confidenceLevel, explanation });
+                }, 2000); // Simulate API delay
+            });
+        }
+
+        checkBtn.addEventListener('click', async () => {
+            const newsText = newsInput.value.trim();
+            if (newsText) {
+                // Call mock API to analyze news text
+                const result = await analyzeNews(newsText);
+                // Display analysis result
+                trustScoreDiv.textContent = `Trust Score: ${result.trustScore}`;
+                confidenceLevelDiv.textContent = `Confidence Level: ${result.confidenceLevel}`;
+                explanationDiv.textContent = result.explanation;
+            }
+        });
+    </script>
+</body>
+</html>
