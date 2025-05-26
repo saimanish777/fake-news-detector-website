@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             trustLevelDisplay.textContent = trustLevelText;
             // Dynamically update the SVG icon inside the trustIcon div
             if (trustIcon) { // Check if trustIcon element exists
+                // This line has been corrected: removed the extra <span> and math-inline text
                 trustIcon.innerHTML = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ${iconColorClass}">${iconPath}</svg>;
             }
 
