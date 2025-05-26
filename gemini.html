@@ -144,7 +144,7 @@
                 </div>
             </div>
         </section>
-        
+
          <section id="contact" class="py-16 bg-blue-50 rounded-xl">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-semibold text-blue-700 text-center mb-8">Contact Us</h2>
@@ -181,85 +181,6 @@
         <p>&copy; 2024 Fake News Detector. All rights reserved.</p>
     </footer>
 
-    <script>
-        const checkButton = document.getElementById('check-button');
-        const newsInput = document.getElementById('news-input');
-        const resultsContainer = document.getElementById('results-container');
-        const trustScoreDisplay = document.getElementById('trust-score');
-        const trustLevelDisplay = document.getElementById('trust-level');
-        const trustExplanationDisplay = document.getElementById('trust-explanation');
-        const spinnerIcon = document.getElementById('spinner-icon');
-        const trustIcon = document.getElementById('trust-icon');
-
-        // Mobile menu toggle functionality
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        if (mobileMenuButton && mobileMenu) {
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-
-
-        checkButton.addEventListener('click', () => {
-            const newsText = newsInput.value.trim();
-            if (newsText === '') {
-                alert('Please enter news text or a headline to check.'); // Basic validation
-                return;
-            }
-
-            // Show loading state
-            spinnerIcon.classList.remove('hidden');
-            checkButton.disabled = true;
-            resultsContainer.classList.add('hidden'); // Hide previous results
-
-            // Simulate analysis (replace with actual API call)
-            setTimeout(() => {
-                // Simulate a successful response
-                const response = {
-                    trustScore: Math.floor(Math.random() * 101), // Random score between 0 and 100
-                    confidence: ['Highly Likely False', 'Likely False', 'Potentially Misleading', 'Likely True', 'Highly Likely True'][Math.floor(Math.random() * 5)],
-                    explanation: [
-                        "The text contains several unsubstantiated claims and uses emotionally charged language.",
-                        "The article cites unreliable sources and lacks supporting evidence.",
-                        "The content presents a biased viewpoint with potential for misinformation.",
-                        "The text provides factual information from credible sources with a neutral tone.",
-                        "The article is based on verified facts and presented in a clear, objective manner."
-                    ][Math.floor(Math.random() * 5)]
-                };
-
-                // Simulate an error (replace with actual error handling)
-                // const response = { error: "Failed to analyze the text. Please try again." };
-
-                spinnerIcon.classList.add('hidden');
-                checkButton.disabled = false;
-
-                if (response.error) {
-                    alert(response.error);
-                    return;
-                }
-
-                // Update UI with results
-                resultsContainer.classList.remove('hidden');
-                trustScoreDisplay.textContent = `${response.trustScore}/100`;
-                trustLevelDisplay.textContent = response.confidence;
-                trustExplanationDisplay.textContent = response.explanation;
-
-                // Update trust icon and color based on score
-                let iconColor = 'green';
-                let iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />`; // Default: checkmark
-                if (response.trustScore < 30) {
-                    iconColor = 'red';
-                    iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a8 8 0 0111.314 0l-7-7a8 8 0 01-11.314 0L3.428 8.828a8 8 0 010-11.314L8 3.414l7.586 7.586a8 8 0 010 11.314l-2.829 2.829z" />`; // X mark
-                } else if (response.trustScore < 60) {
-                    iconColor = 'yellow';
-                    iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.706c1.73 0 2.813-1.874 1.948-3.374l-4.306-7.425c-.49-.844-1.757-.844-2.247 0l-4.306 7.425z" />`;  // Warning
-                }
-                trustIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-${iconColor-500}">${iconPath}</svg>`;
-
-            }, 2000); // Simulate 2-second delay
-        });
-    </script>
+    <script src="script.js"></script> 
 </body>
 </html>
