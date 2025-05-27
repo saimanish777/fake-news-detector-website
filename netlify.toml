@@ -1,10 +1,10 @@
 [build]
   functions = "netlify/functions" # This tells Netlify where to find your serverless functions
   publish = "." # This tells Netlify to publish the root of your repo (where Gemini.html is)
-  command = "npm install" # Assuming your function has node dependencies, this will install them
+  command = "cd netlify/functions && npm install" # This command tells Netlify to go into the functions folder and install dependencies
 
 [[redirects]]
   from = "/"
-  to = "/Gemini.html"
+  to = "/gemini.html"
   status = 200
   force = true
