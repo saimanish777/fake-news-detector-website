@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                throw new Error(errorData.error || HTTP error! Status: ${response.status});
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
             }
 
             const data = await response.json();
@@ -59,13 +59,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update UI with results
             resultsContainer.classList.remove('hidden');
-            trustScoreDisplay.textContent = ${trustScore}/100;
+            trustScoreDisplay.textContent = `${trustScore}/100`;
             trustExplanationDisplay.textContent = analysisDetails;
 
             // Update trust level and icon based on score
             let trustLevelText = 'Analyzing...';
             let iconColorClass = 'text-gray-500';
-            let iconPath = <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />; // Default: checkmark
+            let iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />`; // Default: checkmark
 
             if (trustScore >= 80) {
                 trustLevelText = 'Very High Trust';
@@ -76,22 +76,21 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (trustScore >= 40) {
                 trustLevelText = 'Moderate Trust';
                 iconColorClass = 'text-yellow-600';
-                iconPath = <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.706c1.73 0 2.813-1.874 1.948-3.374l-4.306-7.425c-.49-.844-1.757-.844-2.247 0l-4.306 7.425z" />; // Warning sign
+                iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.706c1.73 0 2.813-1.874 1.948-3.374l-4.306-7.425c-.49-.844-1.757-.844-2.247 0l-4.306 7.425z" />`; // Warning sign
             } else if (trustScore >= 20) {
                 trustLevelText = 'Low Trust';
                 iconColorClass = 'text-orange-600';
-                iconPath = <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.706c1.73 0 2.813-1.874 1.948-3.374l-4.306-7.425c-.49-.844-1.757-.844-2.247 0l-4.306 7.425z" />; // Warning sign (or a stronger X)
+                iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.706c1.73 0 2.813-1.874 1.948-3.374l-4.306-7.425c-.49-.844-1.757-.844-2.247 0l-4.306 7.425z" />`; // Warning sign (or a stronger X)
             } else {
                 trustLevelText = 'Very Low Trust';
                 iconColorClass = 'text-red-600';
-                iconPath = <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />; // X mark
+                iconPath = `<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />`; // X mark
             }
 
             trustLevelDisplay.textContent = trustLevelText;
             // Dynamically update the SVG icon inside the trustIcon div
             if (trustIcon) { // Check if trustIcon element exists
-                // This line has been corrected: removed the extra <span> and math-inline text
-                trustIcon.innerHTML = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 ${iconColorClass}">${iconPath}</svg>;
+                trustIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 <span class="math-inline">\{iconColorClass\}"\></span>{iconPath}</svg>`;
             }
 
         } catch (error) {
@@ -99,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             trustScoreDisplay.textContent = 'Error!';
             trustScoreDisplay.style.color = 'red';
             trustLevelDisplay.textContent = 'Analysis Failed';
-            trustExplanationDisplay.textContent = Could not get analysis. Please try again later. Error: ${error.message};
+            trustExplanationDisplay.textContent = `Could not get analysis. Please try again later. Error: ${error.message}`;
         } finally {
             if (spinnerIcon) spinnerIcon.classList.add('hidden'); // Hide spinner
             checkButton.disabled = false; // Enable button
